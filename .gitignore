@@ -1,0 +1,7 @@
+*.iml
+.idea
+dependency-reduced-pom.xml
+target
+misc.xml
+modules.xml
+vcs.xml
