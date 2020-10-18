@@ -29,7 +29,7 @@ ItemStack gun = LaserCore.getLaserCore().generateGunItem();
 #### Get any item as a gun item:
 ```java
 ItemStack customGun = new ItemStack(Material.IRON_HOE);
-customGun = LaserCore.getLaserCore().generateGunItem();
+customGun = LaserCore.getLaserCore().makeGun(customGun);
 ```
 
 #### Check if any item is a gun:
