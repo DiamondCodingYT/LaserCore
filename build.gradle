@@ -4,7 +4,6 @@
 
 plugins {
     id 'java'
-    id 'maven-publish'
     id 'io.freefair.lombok' version "5.1.1"
 }
 
@@ -15,21 +14,13 @@ description = 'LaserCore'
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url = uri('http://repo1.maven.org/maven2')
-    }
-    maven {
-        url = uri('https://repo.maven.apache.org/maven2/')
-    }
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
 }
 
 dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
-
     implementation group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
-
-//    compileOnly 'org.projectlombok:lombok:1.18.16'
-//    annotationProcessor 'org.projectlombok:lombok:1.18.16'
 }
 
 processResources {
@@ -42,21 +33,12 @@ processResources {
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
 
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            from(components.java)
-//        }
-//    }
-//}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
 //Only works on Diamonds System
-task copyJarToTestServer(type: Copy) {
-    from 'build/libs/LaserCore-'+version+'.jar'
+task copyJarToTestServer(type: Copy, dependsOn: build) {
+    from "build/libs/LaserCore-${version}.jar"
     into "D:/TestServers/LaserCore/plugins"
 }
-build.finalizedBy copyJarToTestServer
