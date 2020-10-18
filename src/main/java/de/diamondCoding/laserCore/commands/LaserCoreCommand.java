@@ -3,12 +3,12 @@ package de.diamondCoding.laserCore.commands;
 import de.diamondCoding.laserCore.commands.subcommands.SubCommand;
 import de.diamondCoding.laserCore.utils.Message;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 public class LaserCoreCommand implements CommandExecutor {
     private final Map<String, SubCommand> subCommandMap = new HashMap<>();
@@ -32,7 +32,7 @@ public class LaserCoreCommand implements CommandExecutor {
         //get the player
         Player player = (Player) sender;
         String key = args[0].toLowerCase();
-        if(subCommandMap.containsKey(key)) {
+        if (subCommandMap.containsKey(key)) {
             return subCommandMap.get(key).execute(player, args);
         }
         Message.COMMAND_LASER_CORE_SYNTAX.sendMessage(sender);
@@ -43,4 +43,12 @@ public class LaserCoreCommand implements CommandExecutor {
         subCommandMap.put(command.toLowerCase(), subCommand);
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        System.out.println(Arrays.toString(args) + " " + args.length);
+        if (!sender.hasPermission("lasercore.admin")) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(subCommandMap.keySet());
+    }
 }

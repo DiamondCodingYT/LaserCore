@@ -87,11 +87,11 @@ public class RayTrace {
      * @return if it intersects
      */
     public static boolean intersects(Vector position, Vector min, Vector max) {
-        if (position.getX() < min.getX() || position.getX() > max.getX()) {
-            return false;
-        } else if (position.getY() < min.getY() || position.getY() > max.getY()) {
-            return false;
-        } else return !(position.getZ() < min.getZ()) && !(position.getZ() > max.getZ());
+        return !(
+                (position.getX() < min.getX() || position.getX() > max.getX())
+                || (position.getY() < min.getY() || position.getY() > max.getY())
+                || (position.getZ() < min.getZ() || position.getZ() > position.getZ())
+        );
     }
 
 }

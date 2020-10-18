@@ -30,17 +30,22 @@ public enum Message {
     COMMAND_LASER_CORE_IS_GUN_FALSE("{prefix} &cDas gehaltene Item ist keine LaserCore Gun.");
 
     private final String MESSAGE;
+    private final String REGEX;
 
     Message(final String MESSAGE) {
         this.MESSAGE = MESSAGE;
+        REGEX = String.format("\\{%s}", this.name().toLowerCase());
     }
 
     public String getMessage(Object... messageValues) {
         String result = MESSAGE;
-        for (int i = 0; i < messageValues.length; i++) result = result.replaceAll("\\{" + i + "}", messageValues[i].toString());
-        result = result.replaceAll("\\{prefix}", PREFIX.MESSAGE);
-        result = result.replaceAll("\\{syntax}", SYNTAX.MESSAGE);
-        result = result.replaceAll("\\{error}", ERROR.MESSAGE);
+        for (int i = 0; i < messageValues.length; i++)
+            result = result.replaceAll("\\{" + i + "}", messageValues[i].toString());
+
+        for (Message value : values()) {
+            result = result.replaceAll(value.REGEX, value.MESSAGE);
+        }
+
         return ChatColor.translateAlternateColorCodes('&', result);
     }
 
