@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LaserCoreCommand implements CommandExecutor {
-    private Map<String, SubCommand> subCommandMap = new HashMap<>();
+    private final Map<String, SubCommand> subCommandMap = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
