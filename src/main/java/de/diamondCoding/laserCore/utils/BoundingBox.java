@@ -1,4 +1,5 @@
 package de.diamondCoding.laserCore.utils;
+
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.IBlockData;
@@ -29,18 +30,18 @@ public class BoundingBox {
     }
 
     //gets min and max point of entity
-    BoundingBox(Entity entity){
+    BoundingBox(Entity entity) {
         AxisAlignedBB bb = ((CraftEntity) entity).getHandle().getBoundingBox();
-        min = new Vector(bb.a,bb.b,bb.c);
-        max = new Vector(bb.d,bb.e,bb.f);
+        min = new Vector(bb.a, bb.b, bb.c);
+        max = new Vector(bb.d, bb.e, bb.f);
     }
 
-    BoundingBox (AxisAlignedBB bb){
-        min = new Vector(bb.a,bb.b,bb.c);
-        max = new Vector(bb.d,bb.e,bb.f);
+    BoundingBox(AxisAlignedBB bb) {
+        min = new Vector(bb.a, bb.b, bb.c);
+        max = new Vector(bb.d, bb.e, bb.f);
     }
 
-    public Vector midPoint(){
+    public Vector midPoint() {
         return max.clone().add(min).multiply(0.5);
     }
 
