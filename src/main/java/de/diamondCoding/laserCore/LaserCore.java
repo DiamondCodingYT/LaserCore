@@ -1,6 +1,7 @@
 package de.diamondCoding.laserCore;
 
 import de.diamondCoding.laserCore.commands.LaserCoreCommand;
+import de.diamondCoding.laserCore.listeners.GunListener;
 import de.diamondCoding.laserCore.utils.Message;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -21,6 +22,9 @@ public class LaserCore extends JavaPlugin {
 
         //Register the Commands
         getCommand("lasercore").setExecutor(new LaserCoreCommand());
+
+        //Register the Listeners
+        getServer().getPluginManager().registerEvents(new GunListener(), this);
     }
 
     public ItemStack generateGunItem() {
