@@ -1,7 +1,8 @@
 *.iml
 .idea
-dependency-reduced-pom.xml
-target
+build
 misc.xml
 modules.xml
 vcs.xml
+.gradle
+test

@@ -5,13 +5,29 @@ import org.bukkit.command.CommandSender;
 
 public enum Message {
 
-    PREFIX("LaserCore"),
-    SYNTAX("Verwenung:"),
+    //hardcoded placeholders
+    PREFIX("&4&lLaser&c&lCore &8»&7"),
+    SYNTAX("&8[&cVerwenung&8]&c"),
+    ERROR("&8[&cFehler&8]&c"),
 
+    //item names
     ITEM_GUN("&3Phaser"),
 
+    //general messages
     NO_PERMISSION("{prefix} &cDu hast keine Rechte!"),
-    COMMAND_LASER_CORE_SYNTAX("{prefix} {syntax} /lasercore <gun|todo>");
+    NO_PLAYER("{prefix} &cDiese Funktion funktoniert leider nur bei Spielern!"),
+
+    //lasercore command
+    COMMAND_LASER_CORE_SYNTAX("{prefix} {syntax} /lasercore <gun|makegun|isgun>"),
+    COMMAND_LASER_CORE_ITEM_NULL("{prefix} {error} Du hällst kein Item in der Hand."),
+
+    COMMAND_LASER_CORE_GUN_INV_FULL("{prefix} {error} Dein Inventar ist voll."),
+    COMMAND_LASER_CORE_GUN_GIVEN("{prefix} &aDir wurde eine LaserCore Gun gegeben."),
+
+    COMMAND_LASER_CORE_MAKE_GUN_MADE_GUN("{prefix} &aDieses Item ist nun eine LaserCore Gun."),
+
+    COMMAND_LASER_CORE_IS_GUN_TRUE("{prefix} &aDas gehaltene Item ist eine LaserCore Gun."),
+    COMMAND_LASER_CORE_IS_GUN_FALSE("{prefix} &cDas gehaltene Item ist keine LaserCore Gun.");
 
     private final String MESSAGE;
 
@@ -24,6 +40,7 @@ public enum Message {
         for (int i = 0; i < messageValues.length; i++) result = result.replaceAll("\\{" + i + "}", messageValues[i].toString());
         result = result.replaceAll("\\{prefix}", PREFIX.MESSAGE);
         result = result.replaceAll("\\{syntax}", SYNTAX.MESSAGE);
+        result = result.replaceAll("\\{error}", ERROR.MESSAGE);
         return ChatColor.translateAlternateColorCodes('&', result);
     }
 

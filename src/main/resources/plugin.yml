@@ -1,0 +1,8 @@
+main: de.diamondCoding.laserCore.LaserCore
+name: LaserCore
+version: ${VERSION}
+
+commands:
+  lasercore:
+    description: The Main Command of the LaserCore Plugin
+    permission: lasercore.admin
