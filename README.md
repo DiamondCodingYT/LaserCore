@@ -6,8 +6,8 @@ LaserCore is an Open Source API for creating LaserTag Games in Minecraft.
 
 Planed Features:
 <ul>
-    <li>Block Hit Event</li>
-    <li>Player Hit Event</li>
+    <li>Targets</li>
+    <li>Effect Targets</li>
 </ul>
 
 ## How To Build:

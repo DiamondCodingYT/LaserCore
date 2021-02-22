@@ -2,7 +2,6 @@ package de.diamondCoding.laserCore.utils;
 
 import de.diamondCoding.laserCore.events.LaserBlockHitEvent;
 import de.diamondCoding.laserCore.events.LaserEntityHitEvent;
-import lombok.Setter;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -15,13 +14,10 @@ public class RayTrace {
     Vector origin, direction;
     double reach, accuracy;
 
-    @Setter
-    Entity rayCaster;
-
     /**
-     * Makes a realy cool raycast
+     * Makes a really cool RayCast
      *
-     * @param world     The world or the raycast
+     * @param world     The world for the RayCast
      * @param origin    The Origin of the raytrace, so where the raytrace starts
      * @param direction The direction of the raytrace
      * @param reach     how long the raytrace should go (in blocks)
@@ -41,19 +37,23 @@ public class RayTrace {
     }
 
     /**
-     * This Methode traveses the raycast till it hits something
+     * This Methode traverses the RayCast till it hits something
      */
-    public void traverseShoot(Player player, boolean withParticles) {
+    public void playerShoot(Player player, boolean withParticles, Color laserColor) {
         for (double d = 0; d <= reach; d += accuracy) {
             Vector position = getPostion(d);
-            if (withParticles)
-                world.spigot().playEffect(position.toLocation(world), Effect.COLOURED_DUST, 0, 1, 255, 0, 0, 1, 0, 64); //maybe build player specific effects
+            if (withParticles) {
+                double yOffset = (1.0D - (d / 3.0D)) * -0.3D;
+                if(yOffset > 0.0D) yOffset = 0.0D;
+                Vector particleVec = position.clone().add(new Vector(0, yOffset, 0));
+                world.spigot().playEffect(particleVec.toLocation(world), Effect.COLOURED_DUST, 0, 1, laserColor.getRed(), laserColor.getGreen(), laserColor.getBlue(), 0.02F, 0, 64);
+            }
             Location location = position.toLocation(world);
 
             //test for entity hit
             Entity[] entities = location.getChunk().getEntities();
             for (Entity entity : entities) {
-                if (entity == null || (rayCaster != null && entity == rayCaster)) continue;
+                if (entity == null || (player != null && entity == player)) continue;
                 BoundingBox boundingBox = new BoundingBox(entity);
                 if (intersects(position, boundingBox.min, boundingBox.max)) {
                     //if a entity was hit we trigger that event
@@ -82,8 +82,8 @@ public class RayTrace {
      * Tests if the position vector is in between the min and max vector
      *
      * @param position the postion vector
-     * @param min      the minamal vector
-     * @param max      the maximal vectoe
+     * @param min      the minimal vector
+     * @param max      the maximal vector
      * @return if it intersects
      */
     public static boolean intersects(Vector position, Vector min, Vector max) {

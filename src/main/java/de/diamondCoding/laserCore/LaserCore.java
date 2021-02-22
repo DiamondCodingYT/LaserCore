@@ -1,7 +1,8 @@
 package de.diamondCoding.laserCore;
 
 import de.diamondCoding.laserCore.commands.LaserCoreCommand;
-import de.diamondCoding.laserCore.listeners.GunListener;
+import de.diamondCoding.laserCore.handlers.CooldownHandler;
+import de.diamondCoding.laserCore.listeners.InteractListener;
 import de.diamondCoding.laserCore.commands.subcommands.GunCommand;
 import de.diamondCoding.laserCore.commands.subcommands.IsGunCommand;
 import de.diamondCoding.laserCore.commands.subcommands.MakeGunCommand;
@@ -17,12 +18,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class LaserCore extends JavaPlugin {
 
+    //These are some static values for now. These will later be moved in a configuration file
+    public static int COOLDOWN_MILLISECONDS = 1500;
+
     @Getter
-    static LaserCore laserCore;
+    private static LaserCore laserCore;
+    @Getter
+    private CooldownHandler cooldownHandler;
 
     @Override
     public void onEnable() {
         laserCore = this;
+
+        //Handlers
+        cooldownHandler = new CooldownHandler();
 
         //Register the Commands
         LaserCoreCommand executor = new LaserCoreCommand();
@@ -33,12 +42,13 @@ public class LaserCore extends JavaPlugin {
         getCommand("lasercore").setExecutor(executor);
 
         //Register the Listeners
-        getServer().getPluginManager().registerEvents(new GunListener(), this);
+        getServer().getPluginManager().registerEvents(new InteractListener(), this);
+
     }
 
     public ItemStack generateGunItem() {
         //generate gun itemstack
-        ItemStack gun = new ItemStack(Material.IRON_BARDING);
+        ItemStack gun = new ItemStack(Material.IRON_HOE); //IRON_BARDING
         ItemMeta meta = gun.getItemMeta();
         meta.setDisplayName(Message.ITEM_GUN.getMessage());
         gun.setItemMeta(meta);
@@ -58,7 +68,7 @@ public class LaserCore extends JavaPlugin {
     public boolean isGun(@NotNull ItemStack itemStack) {
         net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound nbtTagCompound = nmsStack.getTag();
-        return nbtTagCompound!=null && nbtTagCompound.hasKey("isLaserCoreGun") && nbtTagCompound.getBoolean("isLaserCoreGun");
+        return nbtTagCompound != null && nbtTagCompound.hasKey("isLaserCoreGun") && nbtTagCompound.getBoolean("isLaserCoreGun");
     }
 
 }
