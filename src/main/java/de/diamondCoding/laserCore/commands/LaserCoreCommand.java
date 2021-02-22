@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
+public class LaserCoreCommand implements TabExecutor {
 
-public class LaserCoreCommand implements CommandExecutor {
     private final Map<String, SubCommand> subCommandMap = new HashMap<>();
 
     @Override
@@ -51,4 +51,5 @@ public class LaserCoreCommand implements CommandExecutor {
         }
         return new ArrayList<>(subCommandMap.keySet());
     }
+
 }
