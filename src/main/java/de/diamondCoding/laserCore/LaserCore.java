@@ -75,6 +75,7 @@ public class LaserCore extends JavaPlugin {
     public boolean isGun(ItemStack itemStack) {
         if(itemStack == null) return false;
         net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
+        if(nmsStack == null) return false;
         NBTTagCompound nbtTagCompound = nmsStack.getTag();
         return nbtTagCompound != null && nbtTagCompound.hasKey("isLaserCoreGun") && nbtTagCompound.getBoolean("isLaserCoreGun");
     }

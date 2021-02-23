@@ -2,6 +2,11 @@ package de.diamondCoding.laserCore.handlers;
 
 import com.google.gson.*;
 import de.diamondCoding.laserCore.LaserCore;
+import de.diamondCoding.laserCore.configuration.ConfigValue;
+import de.diamondCoding.laserCore.configuration.IntValue;
+import de.diamondCoding.laserCore.configuration.PositiveIntValue;
+import de.diamondCoding.laserCore.configuration.exceptions.UnknownConfigValueException;
+import de.diamondCoding.laserCore.configuration.exceptions.WrongConfigValueTypeException;
 import lombok.Getter;
 
 import java.io.*;
@@ -17,7 +22,7 @@ public class ConfigurationHandler {
     @Getter
     private final boolean initSuccess;
     @Getter
-    private final Map<String, Object> values;
+    private final Map<String, ConfigValue> values;
 
     public ConfigurationHandler() {
         //create gson
@@ -75,11 +80,18 @@ public class ConfigurationHandler {
     }
 
     public void loadValues() {
-        values.put("gunCooldown", configJson.get("gunCooldown").getAsInt());
+        values.put("gunCooldown", PositiveIntValue.fromJson(configJson.get("gunCooldown")));
     }
 
-    public Object getValue(String name) {
+    public ConfigValue getValue(String name) throws UnknownConfigValueException {
+        if(!values.containsKey(name)) throw new UnknownConfigValueException(name);
         return values.get(name);
+    }
+
+    public IntValue getIntValue(String name) throws WrongConfigValueTypeException, UnknownConfigValueException {
+        ConfigValue value = getValue(name);
+        if(!(value instanceof IntValue)) throw new WrongConfigValueTypeException(name, value.getClass().getSimpleName());
+        return (IntValue) value;
     }
 
     private void readConfigFile() {

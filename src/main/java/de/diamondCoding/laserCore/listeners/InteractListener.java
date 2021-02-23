@@ -1,6 +1,9 @@
 package de.diamondCoding.laserCore.listeners;
 
 import de.diamondCoding.laserCore.LaserCore;
+import de.diamondCoding.laserCore.configuration.IntValue;
+import de.diamondCoding.laserCore.configuration.exceptions.UnknownConfigValueException;
+import de.diamondCoding.laserCore.configuration.exceptions.WrongConfigValueTypeException;
 import de.diamondCoding.laserCore.events.PlayerShotsPhaserEvent;
 import de.diamondCoding.laserCore.utils.RayTrace;
 import org.bukkit.Bukkit;
@@ -27,7 +30,14 @@ public class InteractListener implements Listener {
             if(LaserCore.getLaserCore().getCooldownHandler().hasCooldown(player)) return;
 
             //fire shot event
-            int cooldownMilliseconds = (int) LaserCore.getLaserCore().getConfigurationHandler().getValue("gunCooldown"); //When we have features Like burst this can be set to something smaller
+            IntValue intValue;
+            try {
+                intValue = LaserCore.getLaserCore().getConfigurationHandler().getIntValue("gunCooldown");
+            } catch (WrongConfigValueTypeException | UnknownConfigValueException e) { //this would be weird
+                e.printStackTrace();
+                return;
+            }
+            int cooldownMilliseconds = intValue.getValue(); //When we have features Like burst this can be set to something smaller
             PlayerShotsPhaserEvent playerShotsPhaserEvent = new PlayerShotsPhaserEvent(player, Color.fromRGB(255, 0, 0), cooldownMilliseconds);
             Bukkit.getServer().getPluginManager().callEvent(playerShotsPhaserEvent);
             if (playerShotsPhaserEvent.isCancelled()) return; //if the event was canceled we dont need to do the shoot

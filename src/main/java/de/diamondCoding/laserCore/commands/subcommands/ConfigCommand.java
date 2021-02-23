@@ -1,7 +1,9 @@
 package de.diamondCoding.laserCore.commands.subcommands;
 
-import com.google.gson.JsonPrimitive;
 import de.diamondCoding.laserCore.LaserCore;
+import de.diamondCoding.laserCore.configuration.ConfigValue;
+import de.diamondCoding.laserCore.configuration.exceptions.ConfigValueCanNotBeParsedFromStringException;
+import de.diamondCoding.laserCore.configuration.exceptions.UnknownConfigValueException;
 import de.diamondCoding.laserCore.utils.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,28 +30,23 @@ public class ConfigCommand implements SubCommand {
                     Message.COMMAND_LASER_CORE_CONFIG_SET_SYNTAX.sendMessage(player);
                     return false;
                 }
-                String option = args[2];
-                String value = args[3];
-                switch (option.toLowerCase()) {
-                    case "guncooldown":
-                        int gunCooldown;
-                        try {
-                            gunCooldown = Integer.parseInt(value);
-                        } catch (NumberFormatException exception) {
-                            Message.COMMAND_LASER_CORE_CONFIG_SET_NOT_INT.sendMessage(player, value);
-                            return false;
-                        }
-                        if(gunCooldown < 0) {
-                            Message.COMMAND_LASER_CORE_CONFIG_SET_NOT_POSITIV_INT.sendMessage(player, value);
-                            return false;
-                        }
-                        LaserCore.getLaserCore().getConfigurationHandler().getConfigJson().add("gunCooldown", new JsonPrimitive(gunCooldown));
-                        LaserCore.getLaserCore().getConfigurationHandler().writeConfigFile();
-                        LaserCore.getLaserCore().getConfigurationHandler().loadValues();
-                        Message.COMMAND_LASER_CORE_CONFIG_SET_SUCCESS.sendMessage(player, option, value+"ms");
-                        break;
-                    default:
-                        Message.COMMAND_LASER_CORE_CONFIG_SET_UNKNOWN_OPTION.sendMessage(player, option);
+                String optionName = args[2];
+                String valueInput = args[3];
+                ConfigValue currentConfigValue;
+                try {
+                    currentConfigValue = LaserCore.getLaserCore().getConfigurationHandler().getValue(optionName);
+                } catch (UnknownConfigValueException exception) {
+                    Message.COMMAND_LASER_CORE_CONFIG_SET_UNKNOWN_OPTION.sendMessage(player, optionName);
+                    return false;
+                }
+                try {
+                    ConfigValue newConfigValue = currentConfigValue.fromString(valueInput);
+                    LaserCore.getLaserCore().getConfigurationHandler().getConfigJson().add(optionName, newConfigValue.buildJson());
+                    LaserCore.getLaserCore().getConfigurationHandler().writeConfigFile();
+                    LaserCore.getLaserCore().getConfigurationHandler().loadValues();
+                    Message.COMMAND_LASER_CORE_CONFIG_SET_SUCCESS.sendMessage(player, optionName, newConfigValue.getDisplayableValueString());
+                } catch (ConfigValueCanNotBeParsedFromStringException exception) {
+                    Message.COMMAND_LASER_CORE_CONFIG_SET_COULD_NOT_BE_PARSED.sendMessage(player, valueInput, exception.getReason());
                 }
                 return false;
             default:
@@ -65,12 +62,8 @@ public class ConfigCommand implements SubCommand {
             result.add("reload");
             result.add("set");
         } else if(args.length == 3) {
-            switch (args[1].toLowerCase()) {
-                case "set":
-                    result = new ArrayList<>(LaserCore.getLaserCore().getConfigurationHandler().getValues().keySet());
-                case "config":
-                default:
-                    break;
+            if (args[1].equalsIgnoreCase("set")) {
+                result = new ArrayList<>(LaserCore.getLaserCore().getConfigurationHandler().getValues().keySet());
             }
         }
         return result;
