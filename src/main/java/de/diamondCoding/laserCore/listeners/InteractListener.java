@@ -27,7 +27,7 @@ public class InteractListener implements Listener {
             if(LaserCore.getLaserCore().getCooldownHandler().hasCooldown(player)) return;
 
             //fire shot event
-            int cooldownMilliseconds = LaserCore.COOLDOWN_MILLISECONDS; //When we have features Like burst this can be set to something smaller
+            int cooldownMilliseconds = (int) LaserCore.getLaserCore().getConfigurationHandler().getValue("gunCooldown"); //When we have features Like burst this can be set to something smaller
             PlayerShotsPhaserEvent playerShotsPhaserEvent = new PlayerShotsPhaserEvent(player, Color.fromRGB(255, 0, 0), cooldownMilliseconds);
             Bukkit.getServer().getPluginManager().callEvent(playerShotsPhaserEvent);
             if (playerShotsPhaserEvent.isCancelled()) return; //if the event was canceled we dont need to do the shoot
