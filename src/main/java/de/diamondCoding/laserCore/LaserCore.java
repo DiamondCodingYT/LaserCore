@@ -1,6 +1,8 @@
 package de.diamondCoding.laserCore;
 
 import de.diamondCoding.laserCore.commands.LaserCoreCommand;
+import de.diamondCoding.laserCore.commands.subcommands.ConfigCommand;
+import de.diamondCoding.laserCore.handlers.ConfigurationHandler;
 import de.diamondCoding.laserCore.handlers.CooldownHandler;
 import de.diamondCoding.laserCore.listeners.InteractListener;
 import de.diamondCoding.laserCore.commands.subcommands.GunCommand;
@@ -9,6 +11,7 @@ import de.diamondCoding.laserCore.commands.subcommands.MakeGunCommand;
 import de.diamondCoding.laserCore.utils.Message;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -18,11 +21,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class LaserCore extends JavaPlugin {
 
-    //These are some static values for now. These will later be moved in a configuration file
-    public static int COOLDOWN_MILLISECONDS = 1500;
-
     @Getter
     private static LaserCore laserCore;
+    @Getter
+    private ConfigurationHandler configurationHandler;
     @Getter
     private CooldownHandler cooldownHandler;
 
@@ -31,6 +33,11 @@ public class LaserCore extends JavaPlugin {
         laserCore = this;
 
         //Handlers
+        configurationHandler = new ConfigurationHandler();
+        if(!configurationHandler.isInitSuccess()) {
+            System.out.println("ConfigurationHandler init failed. Disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
         cooldownHandler = new CooldownHandler();
 
         //Register the Commands
@@ -38,7 +45,7 @@ public class LaserCore extends JavaPlugin {
         executor.registerSubCommand("gun", new GunCommand());
         executor.registerSubCommand("isgun", new IsGunCommand());
         executor.registerSubCommand("makegun", new MakeGunCommand());
-
+        executor.registerSubCommand("config", new ConfigCommand());
         getCommand("lasercore").setExecutor(executor);
 
         //Register the Listeners
@@ -65,8 +72,10 @@ public class LaserCore extends JavaPlugin {
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
 
-    public boolean isGun(@NotNull ItemStack itemStack) {
+    public boolean isGun(ItemStack itemStack) {
+        if(itemStack == null) return false;
         net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
+        if(nmsStack == null) return false;
         NBTTagCompound nbtTagCompound = nmsStack.getTag();
         return nbtTagCompound != null && nbtTagCompound.hasKey("isLaserCoreGun") && nbtTagCompound.getBoolean("isLaserCoreGun");
     }

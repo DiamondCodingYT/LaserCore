@@ -11,11 +11,11 @@ import java.util.*;
 
 public class LaserCoreCommand implements TabExecutor {
 
-    private final Map<String, SubCommand> subCommandMap = new HashMap<>();
+    private final Map<String, SubCommand> subCommands = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //check if the command executor has permisison
+        //check if the command executor has permission
         if (!sender.hasPermission("lasercore.admin")) {
             Message.NO_PERMISSION.sendMessage(sender);
             return false;
@@ -32,24 +32,31 @@ public class LaserCoreCommand implements TabExecutor {
         //get the player
         Player player = (Player) sender;
         String key = args[0].toLowerCase();
-        if (subCommandMap.containsKey(key)) {
-            return subCommandMap.get(key).execute(player, args);
+        if (subCommands.containsKey(key)) {
+            return subCommands.get(key).execute(player, args);
         }
         Message.COMMAND_LASER_CORE_SYNTAX.sendMessage(sender);
         return false;
     }
 
     public void registerSubCommand(String command, SubCommand subCommand) {
-        subCommandMap.put(command.toLowerCase(), subCommand);
+        subCommands.put(command.toLowerCase(), subCommand);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        System.out.println(Arrays.toString(args) + " " + args.length);
         if (!sender.hasPermission("lasercore.admin")) {
             return new ArrayList<>();
         }
-        return new ArrayList<>(subCommandMap.keySet());
+        if(args.length <= 1) {
+            return new ArrayList<>(subCommands.keySet());
+        } else {
+            SubCommand subCommand = subCommands.get(args[0].toLowerCase());
+            if(subCommand != null) {
+                return subCommand.onTabComplete(sender, command, alias, args);
+            }
+        }
+        return new ArrayList<>();
     }
 
 }
