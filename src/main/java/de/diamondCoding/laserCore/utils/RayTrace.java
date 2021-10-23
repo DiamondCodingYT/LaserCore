@@ -32,7 +32,7 @@ public class RayTrace {
     }
 
     //get a point on the raytrace at X blocks away
-    public Vector getPostion(double blocksAway) {
+    public Vector getPosition(double blocksAway) {
         return origin.clone().add(direction.clone().multiply(blocksAway));
     }
 
